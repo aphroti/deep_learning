@@ -78,7 +78,7 @@ print('Number of unknown gender: {}'.format(sum(df.gender == 'U')))  # 1
 # calculate ratio
 female = sum(df.gender == 'F')
 male = sum(df.gender == 'M')
-print('Ratio of male to female clinicians: {}'.format(round(male/female, 2)))
+print('Ratio of male to female clinicians: {}'.format(round(male/female, 10)))
 
 #####################################################
 # What is the highest ratio of female clinicians to #
@@ -97,7 +97,7 @@ credentials = df.credential.unique().tolist()
 def calc_female_to_male(df):
     female = sum(df.gender == 'F')
     male = sum(df.gender == 'M')
-    ratio = round(female/male, 2)
+    ratio = round(female/male, 10)
     return ratio
 
 # calculate male to female ratio by credential type
@@ -155,7 +155,7 @@ rating_study = rating_df[rating_df.npi.isin(clinicians_to_study)]
 
 # from the superposed histogram, we see that the distribution of each clinician's ratings
 # is a uniform distribution from 0 to 100
-std = round((1/12 * (100 - 0)**2) ** 0.5, 1)
+std = round((1/12 * (100 - 0)**2) ** 0.5, 10)
 print("Standard deviation of each clinician's rates is {}".format(std))
 
 ####################################################################
@@ -173,14 +173,14 @@ rating_study.loc[:, 'credential'] = rating_study.npi.map(npi_credential_map)
 # slice ratings by MD and NP; calculate absolute difference in ratings
 md_rating = rating_study[rating_study.credential == 'MD']
 np_rating = rating_study[rating_study.credential == 'NP']
-abs_diff = round(abs(md_rating.measure_performance_rate.mean() - np_rating.measure_performance_rate.mean()), 1)
+abs_diff = round(abs(md_rating.measure_performance_rate.mean() - np_rating.measure_performance_rate.mean()), 10)
 print('Absolute difference between MD and NP rates is: {}'.format(abs_diff))
 
 #########################################################################
 # What is the p-value of the difference in MD and NP performance rates? #
 #########################################################################
 ttest = sp.stats.ttest_ind(md_rating.measure_performance_rate, np_rating.measure_performance_rate, equal_var=True)
-pvalue = round(ttest[1], 4)
+pvalue = round(ttest[1], 10)
 print('P-value of MD-NP performance rates difference is: {}'.format(pvalue))
 
 ##########################################################################################
@@ -200,4 +200,5 @@ X = sm.add_constant(md_rating.graduation_year)
 y = md_rating.measure_performance_rate
 model = sm.OLS(y, X)
 print(model.fit().summary())
+print('P-value for regression graduation year coefficient: {}'.format(round(model.fit().pvalues[1], 10)))
 
